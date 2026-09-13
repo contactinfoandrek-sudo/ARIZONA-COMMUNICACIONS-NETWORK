@@ -1,14 +1,13 @@
-# Arizona Communications Network
+# Arizona Communications Network — PWA
 
-ACN — Arizona Communications Network.
+Upload every file/folder in this package to the root of the GitHub repository.
 
-Current static ACN phone prototype.
+Included:
+- `index.html` — existing ACN REAL PHONE prototype plus PWA enhancement layer
+- `manifest.json` — installable standalone PWA configuration
+- `service-worker.js` — offline shell/update support
+- `icons/acn-icon.svg` — ACN app icon
 
-## GitHub
-Upload the files in this folder to the root of your repository. Keep the main file named `index.html`.
+The enhancement layer adds virtual battery drain/charging, Control Center, mute, virtual Wi‑Fi, Battery Saver, brightness, volume, calculator, swipe-down Control Center, incoming-call/911 hooks, global announcement hook, and hides the old Radio item.
 
-## Cloudflare
-Use the repository root as the static site output directory so `index.html` is served.
-
-## Note
-This build is a frontend prototype. Real multiplayer voice calls, messaging, authentication, 911 routing, dispatch locking, and server-side networking require a backend.
+The virtual phone controls do not affect the physical device. Real accounts, real-time messaging/calls, 911 routing, Central Dispatch authorization, and server-side announcements require the ACN backend.

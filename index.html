@@ -108,7 +108,7 @@ body{overflow:hidden;background:radial-gradient(ellipse at center,#1c2026 0,#080
 /* Respect reduced-motion preferences */
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 @media(max-width:520px){.phone{width:96vw!important;height:min(96vh,896px)!important;border-radius:48px!important}.screen{border-radius:0 0 43px 43px}}
-</style></head><body><div class="phone">
+</style><link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#050509"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="ACN"><link rel="apple-touch-icon" href="./icons/acn-icon.svg"></head><body><div class="phone">
 <div class="status"><span id="clock">12:00 PM</span><div class="dynamicIsland"><span></span><i></i></div><span class="statusIcons">▮▮▮ ᯤ <b>100%</b> ▰</span></div>
 <div class="wallpaperFX" aria-hidden="true"><div class="aurora a1"></div><div class="aurora a2"></div><div class="aurora a3"></div><div class="stars"></div><div class="glow"></div></div>
 <div class="screen">
@@ -210,4 +210,64 @@ endCall=function(){oldEndCall();document.querySelector('.dynamicIsland')?.classL
  }
  syncTime();setInterval(syncTime,1000);
 })();
-</script></body></html>
+</script>
+<style>
+:root{--acn-b:1;--acn-v:.75}
+body{filter:brightness(var(--acn-b))}
+#acnToast{position:fixed;top:18px;left:50%;transform:translate(-50%,-30px);opacity:0;z-index:99999;background:#18181dcc;color:#fff;padding:12px 18px;border-radius:18px;font:600 14px system-ui;transition:.25s;backdrop-filter:blur(15px)}
+#acnToast.show{opacity:1;transform:translate(-50%,0)}
+#acnCC{position:fixed;inset:0;z-index:99990;background:#0005;backdrop-filter:blur(20px);display:flex;justify-content:center;align-items:flex-start;opacity:0;pointer-events:none;transition:.3s}
+#acnCC.open{opacity:1;pointer-events:auto}
+#acnPanel{margin-top:7vh;width:min(430px,92vw);max-height:82vh;overflow:auto;background:#202024e8;color:white;border-radius:32px;padding:18px;box-shadow:0 25px 80px #0008;transform:translateY(-30px) scale(.96);transition:.3s}
+#acnCC.open #acnPanel{transform:none}
+.acnHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.acnHead h2{margin:0;font:800 22px system-ui}.acnGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acnBtn{border:0;border-radius:19px;padding:14px;background:#ffffff1c;color:white;text-align:left;font:700 14px system-ui;cursor:pointer}.acnBtn.on{background:#438cffb8}
+.acnSub{display:block;font-size:11px;font-weight:500;opacity:.65;margin-top:3px}
+#acnCharge{width:100%;margin-top:12px;background:#28a866}
+#acnCalc{display:none;margin-top:12px;padding:10px;background:#0005;border-radius:20px}.acnCalcOpen{display:block!important}
+#acnCalcDisplay{width:100%;box-sizing:border-box;background:#ffffff14;border:0;color:white;border-radius:12px;padding:12px;font-size:22px;text-align:right}
+#acnCalcGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:7px}.acnCalcKey{border:0;border-radius:12px;padding:12px;background:#ffffff16;color:white;font-weight:700}
+#acnCall{position:fixed;bottom:18px;left:50%;transform:translate(-50%,130%);z-index:99998;width:min(390px,90vw);background:#151519ed;color:white;border-radius:28px;padding:18px;text-align:center;transition:.35s;box-shadow:0 20px 60px #0008}
+#acnCall.show{transform:translate(-50%,0)}.acnPulse{width:64px;height:64px;border-radius:50%;margin:auto auto 10px;background:#438cff44;display:grid;place-items:center;animation:acnP 1.2s infinite}@keyframes acnP{50%{transform:scale(1.12)}}
+</style>
+<div id="acnToast"></div>
+<div id="acnCC"><div id="acnPanel">
+<div class="acnHead"><h2>Control Center</h2><b id="acnBat">100%</b></div>
+<div class="acnGrid">
+<button class="acnBtn on" id="acnMute">🔔 Notifications<span class="acnSub">On</span></button>
+<button class="acnBtn on" id="acnWifi">📶 Wi‑Fi<span class="acnSub">On</span></button>
+<button class="acnBtn" id="acnLow">🔋 Battery Saver<span class="acnSub">Off</span></button>
+<button class="acnBtn" id="acnCalcBtn">🧮 Calculator<span class="acnSub">Open</span></button>
+</div>
+<div style="margin-top:14px;font:700 13px system-ui">Brightness</div><input id="acnBright" type="range" min=".45" max="1.15" step=".01" value="1" style="width:100%">
+<div style="margin-top:12px;font:700 13px system-ui">Volume</div><input id="acnVol" type="range" min="0" max="1" step=".01" value=".75" style="width:100%">
+<button class="acnBtn" id="acnCharge">⚡ Start Charging<span class="acnSub">Virtual ACN battery</span></button>
+<div id="acnCalc"><input id="acnCalcDisplay" readonly value="0"><div id="acnCalcGrid">
+<button class="acnCalcKey" data-c="7">7</button><button class="acnCalcKey" data-c="8">8</button><button class="acnCalcKey" data-c="9">9</button><button class="acnCalcKey" data-c="/">÷</button>
+<button class="acnCalcKey" data-c="4">4</button><button class="acnCalcKey" data-c="5">5</button><button class="acnCalcKey" data-c="6">6</button><button class="acnCalcKey" data-c="*">×</button>
+<button class="acnCalcKey" data-c="1">1</button><button class="acnCalcKey" data-c="2">2</button><button class="acnCalcKey" data-c="3">3</button><button class="acnCalcKey" data-c="-">−</button>
+<button class="acnCalcKey" data-c="0">0</button><button class="acnCalcKey" data-c=".">.</button><button class="acnCalcKey" data-c="=">=</button><button class="acnCalcKey" data-c="+">+</button>
+<button class="acnCalcKey" data-c="C" style="grid-column:1/5">Clear</button>
+</div></div>
+</div></div>
+<div id="acnCall"><div class="acnPulse">📞</div><b id="acnCallTitle" style="font:800 18px system-ui">Incoming ACN Call</b><div id="acnCallSub" style="opacity:.65;margin:5px">ACN Network</div><div style="display:flex;gap:8px"><button id="acnAnswer" style="flex:1;border:0;border-radius:15px;padding:12px;background:#28b463;color:#fff;font-weight:800">Answer</button><button id="acnDecline" style="flex:1;border:0;border-radius:15px;padding:12px;background:#d64545;color:#fff;font-weight:800">Decline</button></div></div>
+<script>
+(()=>{const S=JSON.parse(localStorage.acnState||'{}');S.b=Number.isFinite(S.b)?S.b:100;S.m=!!S.m;S.w=S.w!==false;S.l=!!S.l;S.br=S.br||1;S.v=S.v??.75;let charging=false;
+const $=id=>document.getElementById(id),toast=m=>{let e=$('acnToast');e.textContent=m;e.classList.add('show');clearTimeout(window.acnT);window.acnT=setTimeout(()=>e.classList.remove('show'),2200)},save=()=>localStorage.acnState=JSON.stringify(S);
+function render(){$('acnBat').textContent=Math.round(S.b)+'%';$('acnBright').value=S.br;$('acnVol').value=S.v;document.documentElement.style.setProperty('--acn-b',S.br);document.documentElement.style.setProperty('--acn-v',S.v);
+[['acnMute',S.m],['acnWifi',S.w],['acnLow',S.l]].forEach(x=>{let b=$(x[0]);b.classList.toggle('on',x[1]);b.querySelector('.acnSub').textContent=x[1]?'On':'Off'});save()}
+render();setInterval(()=>{S.b=charging?Math.min(100,S.b+.15):Math.max(1,S.b-(S.l?.018:.035));render()},60000);
+window.ACNOpenControlCenter=()=>{$('acnCC').classList.add('open')};window.ACNCloseControlCenter=()=>{$('acnCC').classList.remove('open')};$('acnCC').onclick=e=>{if(e.target.id==='acnCC')ACNCloseControlCenter()};
+let sy=0;document.addEventListener('touchstart',e=>{if(e.touches[0].clientY<90)sy=e.touches[0].clientY},{passive:true});document.addEventListener('touchend',e=>{if(sy&&e.changedTouches[0].clientY-sy>70)ACNOpenControlCenter();sy=0},{passive:true});
+$('acnMute').onclick=()=>{S.m=!S.m;render();toast(S.m?'Notifications muted':'Notifications enabled')};$('acnWifi').onclick=()=>{S.w=!S.w;render();toast('ACN Wi‑Fi '+(S.w?'enabled':'disabled'))};$('acnLow').onclick=()=>{S.l=!S.l;render();toast('Battery Saver '+(S.l?'enabled':'disabled'))};
+$('acnBright').oninput=e=>{S.br=+e.target.value;render()};$('acnVol').oninput=e=>{S.v=+e.target.value;render()};$('acnCharge').onclick=()=>{charging=!charging;$('acnCharge').querySelector('.acnSub').textContent=charging?'Charging… tap to stop':'Virtual ACN battery';toast(charging?'⚡ ACN battery charging':'Charging stopped')};
+$('acnCalcBtn').onclick=()=>{$('acnCalc').classList.toggle('acnCalcOpen')};$('acnCalcGrid').onclick=e=>{let c=e.target.dataset.c;if(!c)return;if(c==='C')$('acnCalcDisplay').value='0';else if(c==='='){try{$('acnCalcDisplay').value=String(Function('return ('+$('acnCalcDisplay').value+')')())}catch{$('acnCalcDisplay').value='Error'}}else{$('acnCalcDisplay').value=$('acnCalcDisplay').value==='0'&&/[0-9.]/.test(c)?c:$('acnCalcDisplay').value+c}};
+window.ACNNotify=(t,m)=>{if(S.m)return;toast((t?t+': ':'')+m);navigator.vibrate?.([80,50,120])};
+window.ACNIncomingCall=(n='ACN User',e911=false)=>{$('acnCallTitle').textContent=e911?'🚨 Incoming 911 Call':'Incoming Call — '+n;$('acnCallSub').textContent=e911?'Central Dispatch':'ACN Network';$('acnCall').classList.add('show');navigator.vibrate?.([250,120,250,120,500])};
+window.ACNGlobalAnnouncement=(t,m)=>ACNNotify(t,m);$('acnAnswer').onclick=()=>{$('acnCall').classList.remove('show');toast('Call connected')};$('acnDecline').onclick=()=>{$('acnCall').classList.remove('show');toast('Call declined')};
+[...document.querySelectorAll('*')].forEach(e=>{if(e.children.length===0&&/^\\s*Radio\\s*$/i.test(e.textContent||'')){let p=e.closest('button,a,.app,.icon,.tile,.card')||e;p.style.display='none'}});
+if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+})();
+</script>
+</body></html>
