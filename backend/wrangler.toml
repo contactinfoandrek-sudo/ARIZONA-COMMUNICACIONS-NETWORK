@@ -1,0 +1,15 @@
+name = "acn-network-api"
+main = "src/index.js"
+compatibility_date = "2026-09-09"
+
+[durable_objects]
+bindings = [
+  { name = "ACN_ROOM", class_name = "ACNRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ACNRoom"]
+
+[vars]
+ACN_NAME = "Arizona Communications Network"

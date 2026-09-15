@@ -1,0 +1,6 @@
+{
+  "name":"acn-network-api",
+  "private":true,
+  "scripts":{"deploy":"wrangler deploy","dev":"wrangler dev"},
+  "devDependencies":{"wrangler":"latest"}
+}
