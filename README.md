@@ -1,13 +1,18 @@
-# Arizona Communications Network — PWA
+# Arizona Communications Network — Installable PWA
 
-Upload every file/folder in this package to the root of the GitHub repository.
+Upload the CONTENTS of this folder to the ROOT of the GitHub repository. Do not upload the ZIP itself.
 
-Included:
-- `index.html` — existing ACN REAL PHONE prototype plus PWA enhancement layer
-- `manifest.json` — installable standalone PWA configuration
-- `service-worker.js` — offline shell/update support
-- `icons/acn-icon.svg` — ACN app icon
+Required structure:
+- index.html
+- manifest.json
+- service-worker.js
+- icons/acn-192.png
+- icons/acn-512.png
 
-The enhancement layer adds virtual battery drain/charging, Control Center, mute, virtual Wi‑Fi, Battery Saver, brightness, volume, calculator, swipe-down Control Center, incoming-call/911 hooks, global announcement hook, and hides the old Radio item.
+Cloudflare Pages: Framework=None, build command blank, output directory=root/blank, root directory blank.
 
-The virtual phone controls do not affect the physical device. Real accounts, real-time messaging/calls, 911 routing, Central Dispatch authorization, and server-side announcements require the ACN backend.
+Once deployed over HTTPS, Chrome/Edge/Android can offer Install ACN. iPhone/iPad Safari can use Share → Add to Home Screen. Installed mode uses the PWA standalone window.
+
+Included in this version: the existing ACN REAL PHONE prototype, PWA install metadata, app icons, service worker, install prompt, virtual battery/charging, Control Center, mute, virtual Wi-Fi, Battery Saver, brightness/volume, calculator, incoming-call/911 hooks, global announcement hook, animations, and Radio removed/hidden.
+
+Real accounts, real-time messaging, real voice calls, 911 routing, Central Dispatch authorization and server-side global announcements require the ACN backend.
