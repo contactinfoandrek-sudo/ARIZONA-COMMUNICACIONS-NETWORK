@@ -71,10 +71,10 @@ export class ACNRoom extends DurableObject {
       if(!/^[a-z0-9_.-]{3,24}$/.test(username)) return json({error:'Username must be 3-24 characters.'},400);
       if(password.length<8) return json({error:'Password must be at least 8 characters.'},400);
       if(this.ctx.storage.sql.exec(`SELECT 1 FROM users WHERE username=?`,username).toArray().length) return json({error:'Username already exists.'},409);
-      const hp=await hashPassword(password); const id=crypto.randomUUID(); const number=this.number();
-      this.ctx.storage.sql.exec(`INSERT INTO users(id,username,password_hash,salt,display_name,number,role,status,created_at) VALUES(?,?,?,?,?,?,?,?,?)`,id,username,hp.hash,hp.salt,display||username,number,'user','online',Date.now());
+      const hp=await hashPassword(password); const id=crypto.randomUUID(); const number=this.number(); const hasAdmin=!!this.ctx.storage.sql.exec(`SELECT 1 FROM users WHERE role='admin' LIMIT 1`).toArray().length; const role=hasAdmin?'user':'admin';
+      this.ctx.storage.sql.exec(`INSERT INTO users(id,username,password_hash,salt,display_name,number,role,status,created_at) VALUES(?,?,?,?,?,?,?,?,?)`,id,username,hp.hash,hp.salt,display||username,number,role,'online',Date.now());
       const token=rand(32); this.ctx.storage.sql.exec(`INSERT INTO sessions(token,user_id,expires_at) VALUES(?,?,?)`,token,id,Date.now()+30*24*3600*1000);
-      return json({token,user:{id,username,displayName:display||username,number,role:'user',status:'online'}} ,201);
+      return json({token,user:{id,username,displayName:display||username,number,role,status:'online'}} ,201);
     }
     if(request.method==='POST' && path==='auth/login'){
       const b=await request.json(); const username=norm(b.username), password=String(b.password||'');
@@ -101,6 +101,12 @@ export class ACNRoom extends DurableObject {
       const id=this.ctx.storage.sql.exec(`INSERT INTO messages(sender_id,receiver_id,body,created_at) VALUES(?,?,?,?) RETURNING id`,me.id,receiver,body,Date.now()).toArray()[0].id;
       this.broadcast({type:'message',message:{id,senderId:me.id,receiverId:receiver,body,createdAt:Date.now()}} , receiver);
       return json({ok:true,id});
+    }
+    if(request.method==='POST' && path==='admin/users/role'){
+      if(me.role!=='admin') return json({error:'Admin only.'},403);
+      const b=await request.json(); const uid=String(b.userId||''), role=String(b.role||'user');
+      if(!uid || !['user','dispatcher','admin'].includes(role)) return json({error:'Invalid user or role.'},400);
+      this.ctx.storage.sql.exec(`UPDATE users SET role=? WHERE id=?`,role,uid); this.broadcast({type:'user-role',userId:uid,role}); return json({ok:true});
     }
     if(request.method==='GET' && path==='dispatch'){
       const d=this.ctx.storage.sql.exec(`SELECT d.user_id,d.claimed_at,u.display_name,u.number FROM dispatch d LEFT JOIN users u ON u.id=d.user_id WHERE d.id=1`).toArray()[0];
